@@ -1,0 +1,12 @@
+{
+  "id": "./",
+  "name": "Daykeeper · Weekday Trainer",
+  "short_name": "Daykeeper",
+  "description": "Calendar memory drills, a code cheat sheet, and Norwegian and English date audio.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f4ed",
+  "theme_color": "#196449",
+  "icons": [{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}]
+}
