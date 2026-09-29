@@ -17,6 +17,18 @@ Open the website in Safari or Chrome. Pick a practice mode; for spoken dates cho
 
 Use your browser's **Add to Home Screen** or **Install app** option where available. Let the first visit finish downloading: the single HTML file is about 26 MB because it contains all 1,529 recordings. When the footer says **Ready for offline practice**, the site has been cached on that device. Browser storage can be cleared or evicted, so open it online again if offline access stops working.
 
+## Ten-date challenge
+
+Choose your year range and audio language, then tap **Start 10 dates**. Each answer shows feedback and advances to the next date after a short pause. There is no answer deadline; the challenge measures how long you take. Settings and answer reveals are locked during a run.
+
+- A perfect **10/10** run can set the high score: the fastest average solving time per date. Slower perfect runs leave the existing best unchanged.
+- If some answers are wrong, the final result shows the average time for **correct answers only**, without updating the high score. Zero correct answers means no average.
+- Initial narration and replays are excluded from solving time. Answers are unavailable during playback; replay preserves time already spent thinking.
+- Ending a run, changing practice mode, opening the cheat-sheet shortcut, hiding the page, or reloading before completion does not save a score.
+- Your best is stored in this browser's localStorage, alongside the year range, audio language, and date of that run. It is not synced between devices. Clearing browser data removes it. If saving is blocked or full, the result reports that it could not be saved.
+
+The best is compared across all ranges and audio settings; the saved record displays its settings for context.
+
 You can also download `index.html` and open it directly on a computer. The complete app and audio work from that one file. Home-screen installation and website caching require the HTTPS website.
 
 ## Content and accuracy
@@ -31,6 +43,6 @@ Audio combines recorded day/month phrases and years. Years 1900–2099 have whol
 
 ## Checks
 
-Run `node tests/calendar.cjs` , `node tests/audio.cjs`, and `node tests/offline.cjs` (no dependency installation required). Tests compare every date in a 400-year Gregorian cycle with JavaScript's UTC calendar, check all 100 year codes, quiz controls, timers, the cheat sheet, audio coverage for all supported years, and playback cancellation/error handling. Playback tests use a simulated audio API; they do not replace listening tests on physical devices.
+Run `node tests/calendar.cjs`, `node tests/audio.cjs`, `node tests/offline.cjs`, and `node tests/challenge.cjs` (no dependency installation required). Tests compare every date in a 400-year Gregorian cycle with JavaScript's UTC calendar, check all 100 year codes, quiz controls, timers, the cheat sheet, audio coverage for all supported years, and playback cancellation/error handling. Challenge checks cover perfect-only high scores, incorrect answers, correct-only averages, incomplete runs, local persistence, storage errors, and exclusion of listening time. Playback tests use a simulated audio API; they do not replace listening tests on physical devices.
 
 The Pages workflow publishes only the four app files. Test files and this README are kept in the repository, outside the website artifact.

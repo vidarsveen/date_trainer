@@ -1,5 +1,5 @@
 const PREFIX='daykeeper-'+new URL(self.registration.scope).pathname+'-';
-const CACHE=PREFIX+'v1';
+const CACHE=PREFIX+'v2';
 const HOME=self.registration.scope;
 const APP_FILES=['./','./manifest.webmanifest','./icon.svg'];
 self.addEventListener('install',event=>{

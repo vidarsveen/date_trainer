@@ -25,6 +25,8 @@ jobs:
         run: node tests/audio.cjs
       - name: Verify offline caching
         run: node tests/offline.cjs
+      - name: Verify ten-date challenge scoring and timing
+        run: node tests/challenge.cjs
       - name: Prepare static site
         run: |
           mkdir _site
