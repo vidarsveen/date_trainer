@@ -20,6 +20,9 @@ function setup(storage=new Map(),audio=false,failStorage=false){
  vm.runInContext(script,context);const run=s=>vm.runInContext(s,context);
  return {elements,tabs,document,storage,sources,run,advance:ms=>now+=ms,next(){const timer=[...timers.entries()].find(([,v])=>v.ms===1200);assert.ok(timer,'next-date timer');timers.delete(timer[0]);timer[1].f();}};
 }
+const dm=setup();dm.run("mode='daymonth';next()");assert.equal(dm.elements.choices.children.length,7);assert.equal(dm.elements.choices.hidden,false);assert.ok(!/2000/.test(dm.elements.prompt.textContent));
+for(let m=0;m<12;m++)for(let d=1;d<=new Date(2000,m+1,0).getDate();d++){dm.run('card={y:2000,m:'+m+',d:'+d+'}');assert.equal(dm.run('result()[0]'),(d+[0,3,3,6,1,4,6,2,5,0,3,5][m])%7);}
+dm.elements.working.checked=true;dm.run('next();choose(result()[0])');assert.ok(dm.elements.answer.innerHTML.includes('mod 7'));assert.ok(dm.elements.choices.children.every(b=>b.disabled));
 const KEY='daykeeper-challenge-best-v1';
 function complete(app,correctCount=10,ms=2000){
  app.run('startChallenge()');
