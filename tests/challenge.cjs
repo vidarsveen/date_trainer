@@ -26,6 +26,7 @@ function complete(app,correctCount=10,ms=2000){
  for(let i=0;i<10;i++){
   app.advance(ms+(i>=correctCount?5000:0));
   app.run(`choose(${i<correctCount?'result()[0]':'(result()[0]+1)%7'})`);
+  if(i>=correctCount)break;
   if(i<9)app.next();
  }
  assert.equal(app.run('challenge'),null);
@@ -34,8 +35,10 @@ async function main(){
  const a=setup();complete(a);assert.equal(JSON.parse(a.storage.get(KEY)).averageMs,2000);assert.ok(a.elements.challengeResult.textContent.includes('10/10 correct'));
  complete(a,10,3000);assert.equal(JSON.parse(a.storage.get(KEY)).averageMs,2000);
  complete(a,10,1000);assert.equal(JSON.parse(a.storage.get(KEY)).averageMs,1000);
- const saved=a.storage.get(KEY);complete(a,7,500);assert.equal(a.storage.get(KEY),saved);assert.ok(a.elements.challengeResult.textContent.includes('7 correct dates: 0.50 s'));
- complete(a,0);assert.equal(a.storage.get(KEY),saved);assert.ok(a.elements.challengeResult.textContent.includes('No average'));
+ const saved=a.storage.get(KEY);complete(a,7,500);assert.equal(a.storage.get(KEY),saved);assert.ok(a.elements.challengeResult.textContent.includes('Stopped on date 8'));assert.ok(a.elements.answer.innerHTML.includes('mod 7'));assert.equal(a.run('revealed'),true);
+ complete(a,0);assert.equal(a.storage.get(KEY),saved);assert.ok(a.elements.challengeResult.textContent.includes('Stopped on date 1'));assert.ok(a.elements.answer.innerHTML.includes('mod 7'));
+ complete(a,9);assert.equal(a.storage.get(KEY),saved);assert.ok(a.elements.challengeResult.textContent.includes('Stopped on date 10'));
+ const wrong=setup();wrong.run('startChallenge()');wrong.advance(500);const wrongCard=wrong.run('cardCount');wrong.run('choose((result()[0]+1)%7)');assert.equal(wrong.run('challenge'),null);assert.throws(()=>wrong.next(),/next-date timer/);assert.equal(wrong.run('cardCount'),wrongCard);assert.equal(wrong.elements.startChallenge.disabled,false);
  const reloaded=setup(a.storage);assert.equal(reloaded.run('bestChallenge.averageMs'),1000);assert.ok(reloaded.elements.challengeBest.textContent.includes('1.00 s'));
  a.run('startChallenge()');const first=a.run('cardCount');a.run('next();showAnswer();');assert.equal(a.run('cardCount'),first);assert.equal(a.run('revealed'),false);
  a.advance(500);a.run('choose(result()[0]);choose(result()[0]);');assert.equal(a.run('challenge.answers.length'),1);
