@@ -10,7 +10,7 @@ for(const [id,val] of Object.entries({speed:'5',advance:'reveal',hold:'2',minYea
 elements.working.checked=true;
 const tabs=['year','month','century','date'].map(mode=>Object.assign(new Element(),{dataset:{mode}}));
 let now=0;const document={getElementById:id=>elements[id],querySelectorAll:()=>tabs,createElement:()=>new Element(),addEventListener(){}};
-const context=vm.createContext({document,localStorage:{getItem:()=>null,setItem(){}},performance:{now:()=>now},requestAnimationFrame(){},console});
+const context=vm.createContext({clearTimeout,document,localStorage:{getItem:()=>null,setItem(){}},performance:{now:()=>now},requestAnimationFrame(){},console});
 vm.runInContext(script,context);const run=s=>vm.runInContext(s,context);
 let dates=0;const dt=new Date(0);for(let y=2000;y<2400;y++){for(let m=0;m<12;m++){dt.setUTCFullYear(y,m+1,0);const max=dt.getUTCDate();assert.equal(run(`daysInMonth(${y},${m})`),max);for(let d=1;d<=max;d++){dt.setUTCFullYear(y,m,d);assert.equal(run(`weekday(${y},${m},${d})`),dt.getUTCDay(),`${y}-${m+1}-${d}`);dates++;}}}
 for(let n=0;n<100;n++){dt.setUTCFullYear(2000+n,2,1);const expected=(dt.getUTCDay()-1-3-6+21)%7;assert.equal(run(`yearCode(${n})`),expected);}

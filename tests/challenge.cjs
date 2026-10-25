@@ -18,7 +18,7 @@ function setup(storage=new Map(),audio=false,failStorage=false){
  }
  const context=vm.createContext({document,console,Uint8Array,atob:s=>Buffer.from(s,'base64').toString('binary'),...(audio?{AudioContext}:{}),performance:{now:()=>now},requestAnimationFrame(){},setTimeout(f,ms){timers.set(++id,{f,ms});return id;},clearTimeout(id){timers.delete(id);},localStorage:{getItem:key=>storage.get(key)||null,setItem(key,value){if(failStorage)throw Error('quota');storage.set(key,value);}}});
  vm.runInContext(script,context);const run=s=>vm.runInContext(s,context);
- return {elements,tabs,document,storage,sources,run,advance:ms=>now+=ms,next(){const timer=[...timers.entries()].find(([,v])=>v.ms===1200);assert.ok(timer,'next-date timer');timers.delete(timer[0]);timer[1].f();}};
+ return {elements,tabs,document,storage,sources,run,timers,advance:ms=>now+=ms,next(){const timer=[...timers.entries()].find(([,v])=>v.ms===1200);assert.ok(timer,'next-date timer');timers.delete(timer[0]);timer[1].f();}};
 }
 const dm=setup();dm.run("mode='daymonth';next()");assert.equal(dm.elements.choices.children.length,7);assert.equal(dm.elements.choices.hidden,false);assert.ok(!/2000/.test(dm.elements.prompt.textContent));
 for(let m=0;m<12;m++)for(let d=1;d<=new Date(2000,m+1,0).getDate();d++){dm.run('card={y:2000,m:'+m+',d:'+d+'}');assert.equal(dm.run('result()[0]'),(d+[0,3,3,6,1,4,6,2,5,0,3,5][m])%7);}
@@ -35,6 +35,15 @@ function complete(app,correctCount=10,ms=2000){
  assert.equal(app.run('challenge'),null);
 }
 async function main(){
+ const voice=setup(new Map(),true);voice.elements.voiceLanguage.value='nb-NO';voice.elements.voiceInterval.value='2';voice.run("mode='voice';next();startVoice()");await new Promise(setImmediate);
+ assert.equal(voice.sources.length,1);assert.equal(voice.sources[0].buffer.length,24000);assert.equal(voice.run('voiceRunning'),true);
+ voice.sources[0].onended();assert.ok([...voice.timers.values()].some(t=>t.ms===2000));
+ voice.run('stopVoice()');assert.equal(voice.run('voiceRunning'),false);assert.ok(![...voice.timers.values()].some(t=>t.ms===2000));
+ voice.run('startVoice();stopVoice()');await new Promise(setImmediate);assert.equal(voice.sources.length,1);
+ voice.elements.voiceLanguage.value='en-GB';voice.run('startVoice()');await new Promise(setImmediate);assert.equal(voice.sources.length,2);
+ voice.document.hidden=true;voice.document.listeners.visibilitychange();assert.equal(voice.run('voiceRunning'),false);assert.equal(voice.sources[1].stopped,true);
+ voice.elements.voiceInterval.value='0';voice.run('startVoice()');assert.equal(voice.run('voiceRunning'),false);
+
  const a=setup();complete(a);assert.equal(JSON.parse(a.storage.get(KEY)).averageMs,2000);assert.ok(a.elements.challengeResult.textContent.includes('10/10 correct'));
  complete(a,10,3000);assert.equal(JSON.parse(a.storage.get(KEY)).averageMs,2000);
  complete(a,10,1000);assert.equal(JSON.parse(a.storage.get(KEY)).averageMs,1000);

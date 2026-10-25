@@ -17,7 +17,7 @@ class AudioContext{
  createBufferSource(){const source={connect(){},start(){this.started=true;},stop(){this.stopped=true;}};sources.push(source);return source;}
 }
 const document={getElementById:id=>elements[id],querySelectorAll:()=>tabs,createElement:()=>new Element(),addEventListener(){}};
-const context=vm.createContext({document,AudioContext,Uint8Array,atob:s=>Buffer.from(s,'base64').toString('binary'),setTimeout:()=>0,localStorage:{getItem:()=>null,setItem(){}},performance:{now:()=>now},requestAnimationFrame(){},console});
+const context=vm.createContext({clearTimeout,document,AudioContext,Uint8Array,atob:s=>Buffer.from(s,'base64').toString('binary'),setTimeout:()=>0,localStorage:{getItem:()=>null,setItem(){}},performance:{now:()=>now},requestAnimationFrame(){},console});
 vm.runInContext(script,context);const run=s=>vm.runInContext(s,context);
 async function main(){
  for(const lang of ['nb-NO','en-GB']){
